@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Question2.BLL;
+using System.IO;
 
 namespace Question2.Validation
 {
@@ -36,20 +37,28 @@ namespace Question2.Validation
 
         }
         public static bool IsValidName(TextBox text)
-        {
-            for (int i = 0; i < text.TextLength; i++)
-            {
-                if (char.IsDigit(text.Text, i) || (char.IsWhiteSpace(text.Text, i)))
-                {
-                    MessageBox.Show("Invalid Name,Please enter another name.", "INVALID NAME");
-                    text.Clear();
-                    text.Focus();
-                    return false;
-                }
-
+        {   
+            //Verify if the input is empty
+            if(text.Text.Length == 0) 
+            { 
+                MessageBox.Show("The name should not be empty, please enter again!");
+                return false;
             }
-            return true;
+            //verify if the input name includes number or whitespace
+            else { 
+                for (int i = 0; i < text.TextLength; i++)
+                {
+                    if (char.IsDigit(text.Text, i) || (char.IsWhiteSpace(text.Text, i)))
+                    {
+                        MessageBox.Show("Invalid Name,Please enter another name.", "INVALID NAME");
+                        text.Clear();
+                        text.Focus();
+                        return false;
+                    }
 
+                }
+                return true;
+             }            
         }
         public static bool IsUniqueID(List<Customer> listC, int id)
         {
@@ -63,5 +72,37 @@ namespace Question2.Validation
             }
             return true;
         }
+
+        public static bool IsValidPhoneNumber(MaskedTextBox text)
+        {
+            if (text.TextLength != 14)
+            {
+                MessageBox.Show("Invalid Phone Number, it must be a 10 digit number");
+                text.Clear();
+                text.Focus();
+                return false;
+            }
+            return true;
+
+        }
+
+        public static bool IsValidDataInFile(string line)
+        {
+            string[] attributes = {"ID","First Name","Last Name","Phone Number"};
+            string[] fields = line.Split(',');
+
+            //Verify if any data in record from DB is empty or null
+            for(int i = 0; i < fields.Length; i++)
+            {
+                if (fields[i] == null || fields[i].Length == 0) 
+                {
+                    MessageBox.Show("In the DB, there is a record whose " + attributes[i] + "is null or empty. The whole record information is: " + line);
+                    return false;
+                }
+                        
+            }
+            return true;
+        }
+
     }
 }
